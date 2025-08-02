@@ -6,35 +6,20 @@ if (!MONGODB_URI) {
   throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
 }
 
-let cached = global.mongoose;
-
-if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+// Type declaration for globalThis
+declare global {
+  var mongooseConn: Promise<typeof mongoose> | undefined;
 }
 
-async function connectDB() {
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  if (!cached.promise) {
-    const opts = {
+// Reuse connection across hot reloads
+const connectDB = async (): Promise<typeof mongoose> => {
+  if (!globalThis.mongooseConn) {
+    globalThis.mongooseConn = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    };
-
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
     });
   }
 
-  try {
-    cached.conn = await cached.promise;
-  } catch (e) {
-    cached.promise = null;
-    throw e;
-  }
+  return globalThis.mongooseConn;
+};
 
-  return cached.conn;
-}
-
-export default connectDB; 
+export default connectDB;
