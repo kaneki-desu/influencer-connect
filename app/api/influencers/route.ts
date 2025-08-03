@@ -1,14 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
+import connectDB, { registerModels } from '@/lib/mongodb';
 import Influencer from '@/models/Influencer';
 
 export async function GET() {
   try {
     await connectDB();
+    
+    // Register models to ensure they're available
+    registerModels();
+    
     const influencers = await Influencer.find({}).sort({ createdAt: -1 });
     return NextResponse.json(influencers);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch influencers' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error fetching influencers:', error);
+    return NextResponse.json({ 
+      error: 'Failed to fetch influencers', 
+      details: error.message 
+    }, { status: 500 });
   }
 }
 

@@ -33,4 +33,17 @@ const connectDB = async (): Promise<typeof mongoose> => {
   return globalThis.mongooseConn;
 };
 
+// Ensure models are registered
+const registerModels = () => {
+  try {
+    // Import models to ensure they're registered
+    require('@/models/Influencer');
+    require('@/models/Campaign');
+    console.log('Models registered successfully');
+  } catch (error) {
+    console.error('Error registering models:', error);
+  }
+};
+
+export { registerModels };
 export default connectDB;
