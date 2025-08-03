@@ -9,8 +9,9 @@ export async function GET() {
       .populate('influencerIds', 'name category instagram followers location')
       .sort({ createdAt: -1 });
     return NextResponse.json(campaigns);
-  } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch campaigns' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error fetching campaigns:', error);
+    return NextResponse.json({ error: error.message || 'Failed to fetch campaigns' }, { status: 500 });
   }
 }
 
