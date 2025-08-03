@@ -30,24 +30,45 @@ export default function Assign() {
   const [selectedCampaign, setSelectedCampaign] = useState<string>('');
   const [selectedInfluencers, setSelectedInfluencers] = useState<string[]>([]);
   const [saving, setSaving] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setFetchError(null);
     try {
       const [campaignsRes, influencersRes] = await Promise.all([
         fetch('/api/campaigns'),
         fetch('/api/influencers')
       ]);
-      
+
+      if (!campaignsRes.ok) {
+        const errorData = await campaignsRes.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch campaigns');
+      }
+      if (!influencersRes.ok) {
+        const errorData = await influencersRes.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch influencers');
+      }
+
       const campaignsData = await campaignsRes.json();
       const influencersData = await influencersRes.json();
-      
+
+      if (!Array.isArray(campaignsData)) {
+        throw new Error('Invalid campaigns data format received from server.');
+      }
+      if (!Array.isArray(influencersData)) {
+        throw new Error('Invalid influencers data format received from server.');
+      }
+
       setCampaigns(campaignsData);
       setInfluencers(influencersData);
-    } catch (error) {
+    } catch (error: any) {
+      setFetchError(error.message || 'Error fetching data');
+      setCampaigns([]);
+      setInfluencers([]);
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
@@ -117,6 +138,20 @@ export default function Assign() {
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
             <div className="h-96 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{fetchError}</span>
           </div>
         </div>
       </div>

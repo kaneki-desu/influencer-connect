@@ -36,17 +36,28 @@ export default function Campaigns() {
     startDate: '',
     endDate: ''
   });
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchCampaigns();
   }, []);
 
   const fetchCampaigns = async () => {
+    setFetchError(null);
     try {
       const response = await fetch('/api/campaigns');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to fetch campaigns');
+      }
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid data format received from server.');
+      }
       setCampaigns(data);
-    } catch (error) {
+    } catch (error: any) {
+      setFetchError(error.message || 'Error fetching campaigns');
+      setCampaigns([]);
       console.error('Error fetching campaigns:', error);
     } finally {
       setLoading(false);
@@ -111,6 +122,20 @@ export default function Campaigns() {
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-1/4 mb-8"></div>
             <div className="h-96 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (fetchError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-center">
+            <strong className="font-bold">Error: </strong>
+            <span className="block sm:inline">{fetchError}</span>
           </div>
         </div>
       </div>
