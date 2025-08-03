@@ -12,13 +12,24 @@ declare global {
 }
 
 // Reuse connection across hot reloads
+
 const connectDB = async (): Promise<typeof mongoose> => {
   if (!globalThis.mongooseConn) {
+    console.log('Connecting to MongoDB...');
     globalThis.mongooseConn = mongoose.connect(MONGODB_URI, {
       bufferCommands: false,
-    });
+    })
+      .then((mongooseInstance) => {
+        console.log('MongoDB connected');
+        return mongooseInstance;
+      })
+      .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        throw err;
+      });
+  } else {
+    console.log('Reusing existing MongoDB connection');
   }
-
   return globalThis.mongooseConn;
 };
 
