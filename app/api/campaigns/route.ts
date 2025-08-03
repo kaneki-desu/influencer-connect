@@ -1,6 +1,8 @@
+
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Campaign from '@/models/Campaign';
+import Influencer from '@/models/Influencer';
 
 export async function GET() {
   try {
