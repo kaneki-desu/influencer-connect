@@ -185,7 +185,7 @@ export default function Campaigns() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Budget ($)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Budget (₹)</label>
                   <input
                     type="number"
                     required
@@ -250,7 +250,7 @@ export default function Campaigns() {
               <div className="space-y-2 mb-4">
                 <div className="flex items-center text-sm text-gray-600">
                   <DollarSign className="w-4 h-4 mr-2" />
-                  <span className="font-medium">${campaign.budget.toLocaleString()}</span>
+                  <span className="font-medium">₹{campaign.budget.toLocaleString()}</span>
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <Calendar className="w-4 h-4 mr-2" />

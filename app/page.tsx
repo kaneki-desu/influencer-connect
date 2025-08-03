@@ -186,7 +186,7 @@ export default function Home() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Budget</p>
                 <p className="text-2xl font-bold text-gray-900">
-                  ${totalBudget.toLocaleString()}
+                  ₹{totalBudget.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -225,14 +225,14 @@ export default function Home() {
           </div>
 
           <div className="card">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Budgets</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Campaign Budgets (₹)</h3>
             {budgetData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={budgetData}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="brand" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip formatter={(value) => [`₹${value}`, 'Budget']} />
                   <Bar dataKey="budget" fill="#3b82f6" />
                 </BarChart>
               </ResponsiveContainer>

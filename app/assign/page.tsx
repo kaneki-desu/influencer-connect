@@ -188,7 +188,7 @@ export default function Assign() {
                       <h3 className="font-medium text-gray-900">{campaign.brand}</h3>
                       <p className="text-sm text-gray-600 mt-1">{campaign.objective}</p>
                       <p className="text-sm text-gray-500 mt-1">
-                        ${campaign.budget.toLocaleString()} • {campaign.influencerIds.length} influencers
+                        ₹{campaign.budget.toLocaleString()} • {campaign.influencerIds.length} influencers
                       </p>
                     </div>
                     {selectedCampaign === campaign._id && (
